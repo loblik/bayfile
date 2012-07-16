@@ -4,8 +4,9 @@ Is a simple client to bayfiles.com file sharing service. It's written in Perl an
 
 ## features
 
-* upload a file
+* upload a file 
 * show upload progress
+* verify file integrity (compare digests)
 
 ## dependencies
 
@@ -13,6 +14,7 @@ All you need is Perl and following packages. If these are not shipped with your 
 
 * WWW::Curl::Simple
 * JSON
+* Digest::SHA
 
 ## usage
 
