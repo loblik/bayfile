@@ -11,10 +11,16 @@ use WWW::Curl::Form;
 use Digest::SHA;
 use Getopt::Std;
 
+use Data::Dumper;
+
 $|=1;
 
 my $curl;
 my $filename;
+my $session;
+
+my $username;
+my $password;
 
 sub progress_callback {
 
@@ -68,7 +74,7 @@ sub make_request {
   my ($url) = @_;
   my $response;
 
-  $curl->setopt(CURLOPT_URL, $url);
+  $curl->setopt(CURLOPT_URL, make_url($url));
   $curl->setopt(CURLOPT_WRITEDATA,\$response);
 
   if (my $retcode = $curl->perform) {
@@ -90,7 +96,7 @@ sub do_upload {
 
   my $response;
 
-  $curl->setopt(CURLOPT_URL, $url);
+  $curl->setopt(CURLOPT_URL, make_url($url));
   $curl->setopt(CURLOPT_WRITEDATA,\$response);
   $curl->setopt(CURLOPT_HTTPPOST, $curlf);
   $curl->setopt(CURLOPT_PROGRESSFUNCTION, \&progress_callback);
@@ -125,13 +131,60 @@ sub do_upload {
 sub readable_size { 
 
   my ($val) = @_;
-  my $unit = 'b';
+  my $unit = 'B';
 
   $val /= 1024.0 and $unit = 'kB' if $val > 1024;
   $val /= 1024.0 and $unit = 'MB' if $val > 1024;
   $val /= 1024.0 and $unit = 'GB' if $val > 1024;
 
-  return sprintf "%.2f %s", $val, $unit;
+  my $ret;
+  
+  if ($val == int($val)) {
+    $ret = sprintf "%d%s", $val, $unit;
+  } else {
+    $ret = sprintf "%.2f%s", $val, $unit;
+  }
+
+  return $ret;
+}
+
+sub make_url {
+
+  my($url) = @_;
+
+  $url = $url."?session=$session" if $session;
+  
+  return $url;
+}
+
+sub start_session {
+
+  my $json_array = make_request(URL . "/account/login/$username/$password");
+  $session = $json_array->{'session'};
+}
+
+sub end_session {
+
+  my $json_array = make_request(URL . "/account/logout");
+}
+
+sub list_files {
+
+  my $json_array = make_request(URL . "/account/files");
+
+  foreach my $file (keys %$json_array) {
+
+    next if $file eq 'error';
+    
+    my $info_token = $json_array->{$file}->{'infoToken'};
+    my $filename = $json_array->{$file}->{'filename'};
+
+    print $file." ";
+    print $filename." ";
+    print readable_size($json_array->{$file}->{'size'})." ";
+    print "http://bayfiles.com/file/$file/$info_token/$filename\n";
+  }
+
 }
 
 sub upload_file {
@@ -152,22 +205,49 @@ usage: bayfile [OPTIONS] [FILE] ...
 options:
   -h  print this help end exit
 
+  -u  username
+  -p  password
+
+account options:
+  -l  list files
+
 EOF
    exit 0;
 }
 
 my %opt;
-getopts( "h", \%opt ) or usage();
+my $return_value = 0;
 
+getopts("hu:p:l", \%opt);
+
+print_usage() if ($opt{'u'} and !$opt{'p'});
+print_usage() if ($opt{'p'} and !$opt{'u'});
+  
+$username = $opt{'u'} if $opt{'u'};
+$password = $opt{'p'} if $opt{'p'};
+
+$curl = WWW::Curl::Easy->new;
 print_usage() if $opt{'h'};
+
+start_session($username, $password) if ($opt{'u'});
+
+print_usage() if ($opt{'l'} and !$opt{'u'});
+
+if ($opt{'l'}) {
+  list_files();
+  goto END;
+}
+
 print_usage() if (@ARGV == 0);
 
-my $return_value = 0;
 
 while ($filename = shift @ARGV) {
 
   $return_value = 1 if upload_file();
-}
+} 
+
+END:
+end_session();
 
 exit $return_value;
 

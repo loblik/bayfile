@@ -7,6 +7,8 @@ Is a simple command-line client to [bayfiles.com][bayfiles] file sharing service
 * upload a file 
 * show transfer progress
 * verify file integrity (compare digests)
+* allow logging in
+* listing files
 
 ## dependencies
 
@@ -22,6 +24,11 @@ All you need is Perl and following modules. If some of them is not shipped with 
     
     options:
       -h  print this help end exit
+      -u  username
+      -p  password
+
+    account options:
+      -l  list files
 
 ## bugs/contact
 
