@@ -5,7 +5,7 @@ Is a simple client to bayfiles.com file sharing service. It's written in Perl an
 ## features
 
 * upload a file 
-* show upload progress
+* show transfer progress
 * verify file integrity (compare digests)
 
 ## dependencies
