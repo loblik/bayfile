@@ -18,6 +18,10 @@ All you need is Perl and following modules. If some of them is not shipped with 
 * Digest::SHA
 
 ## usage
+    usage: bayfile [OPTIONS] [FILE] ...
+    
+    options:
+      -h  print this help end exit
 
 ## bugs/contact
 
