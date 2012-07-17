@@ -10,7 +10,7 @@ Is a simple client to [bayfiles.com][bayfiles] file sharing service. It's writte
 
 ## dependencies
 
-All you need is Perl and following packages. If these are not shipped with your distribution you can [get them from CPAN][cpan].
+All you need is Perl and following packages. If some of them is not shipped with your distribution you can [get it from CPAN][cpan].
 
 
 * WWW::Curl::Simple
