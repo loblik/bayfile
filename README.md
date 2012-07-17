@@ -1,6 +1,6 @@
 # bayfile
 
-Is a simple client to bayfiles.com file sharing service. It's written in Perl and it uses official JSON API of the website.
+Is a simple client to [bayfiles.com][bayfiles] file sharing service. It's written in Perl and it uses official JSON API of the website.
 
 ## features
 
@@ -10,7 +10,8 @@ Is a simple client to bayfiles.com file sharing service. It's written in Perl an
 
 ## dependencies
 
-All you need is Perl and following packages. If these are not shipped with your distribution you can get them from CPAN.
+All you need is Perl and following packages. If these are not shipped with your distribution you can [get them from CPAN][cpan].
+
 
 * WWW::Curl::Simple
 * JSON
@@ -18,4 +19,5 @@ All you need is Perl and following packages. If these are not shipped with your 
 
 ## usage
 
-
+[bayfiles]: http://bayfiles.com/ "bayfiles.com"
+[cpan]: http://www.cpan.org/modules/INSTALL.html "How to install CPAN modules"
